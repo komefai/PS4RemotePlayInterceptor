@@ -1,10 +1,10 @@
 # PS4 Remote Play Interceptor
 
-A small .NET library to intercept controls on PS4 Remote Play for Windows, powered by [EasyHook](https://easyhook.github.io/). The library can be used to automate any PS4 game. See [prototype demo](https://youtu.be/QjTZsPR-BcI) made using this library.
+A small .NET library to intercept controls on PS4 Remote Play for Windows, powered by [EasyHook](https://easyhook.github.io/). The library can be used to automate any PS4 game. See the [prototype demo](https://youtu.be/QjTZsPR-BcI) made using this library.
 
 ## Install
 
-#### Using NuGet
+#### Using NuGet (Recommended)
 ```
 Install-Package PS4RemotePlayInterceptor
 ```
