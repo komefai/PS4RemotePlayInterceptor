@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Komefai</authors>
+    <owners>Komefai</owners>
+    <licenseUrl>https://github.com/komefai/PS4RemotePlayInterceptor#license</licenseUrl>
+    <projectUrl>https://github.com/komefai/PS4RemotePlayInterceptor</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>$description$</description>
+    <summary>Intercepting PS4 Remote Play</summary>
+    <releaseNotes>0.1.0: First version</releaseNotes>
+    <copyright>Copyright © 2017 Komefai</copyright>
+    <tags>ps4 bot remoteplay api hooking easyhook</tags>
+  </metadata>
+</package>
