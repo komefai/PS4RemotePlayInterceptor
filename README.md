@@ -2,7 +2,7 @@
 
 A small .NET library to intercept controls on PS4 Remote Play for Windows, powered by [EasyHook](https://easyhook.github.io/). The library can be used to automate any PS4 game. See the [prototype demo](https://youtu.be/QjTZsPR-BcI).
 
-Also check out [PS4 Macro](https://github.com/komefai/PS4Macro) repository for a ready-to-use built on this library.
+Also check out [PS4 Macro](https://github.com/komefai/PS4Macro) repository for a ready-to-use software built on this library.
 
 ## Install
 
