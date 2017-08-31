@@ -10,7 +10,7 @@ using System.Text;
 
 namespace PS4RemotePlayInterceptor
 {
-    public delegate void InterceptionDelegate(ref DualshockState state);
+    public delegate void InterceptionDelegate(ref DualShockState state);
 
     public class Interceptor
     {

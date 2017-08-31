@@ -60,7 +60,7 @@ namespace PS4RemotePlayInterceptor
             if (Interceptor.Callback != null)
             {
                 // Parse the state
-                var state = DualshockState.ParseFromDualshockRaw(inputReport);
+                var state = DualShockState.ParseFromDualshockRaw(inputReport);
 
                 // Skip if state is invalid
                 if (state == null)

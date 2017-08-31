@@ -11,7 +11,7 @@ namespace PS4RemotePlayInterceptorDemo
             InitializeComponent();
         }
 
-        private static void OnReceiveData(ref DualshockState state)
+        private static void OnReceiveData(ref DualShockState state)
         {
             /* -- Modify the controller state here -- */
 

@@ -18,7 +18,7 @@ namespace PS4RemotePlayInterceptorConsoleDemo
             Console.ReadKey();
         }
 
-        private static void OnReceiveData(ref DualshockState state)
+        private static void OnReceiveData(ref DualShockState state)
         {
             /* -- Modify the controller state here -- */
 

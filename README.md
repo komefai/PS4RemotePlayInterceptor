@@ -32,7 +32,7 @@ class Program
         Console.ReadKey();
     }
 
-    private static void OnReceiveData(ref DualshockState state)
+    private static void OnReceiveData(ref DualShockState state)
     {
         /* -- Modify the controller state here -- */
 
@@ -63,6 +63,10 @@ class Program
 > {"STATUS_INTERNAL_ERROR: Unknown error in injected C++ completion routine. (Code: 15)"}
 
 SOLUTION: Restart PS4 Remote Play.
+
+> DualshockState Could not be found
+
+SOLUTION: Rename to DualShockState for version >= 0.2.0
 
 ## Credits
 
