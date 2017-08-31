@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DualshockState.cs" />
+    <Compile Include="DualShockState.cs" />
     <Compile Include="Hooks.cs" />
     <Compile Include="InjectionInterface.cs" />
     <Compile Include="Interceptor.cs" />
