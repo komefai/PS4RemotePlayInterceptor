@@ -55,6 +55,7 @@ class Program
 ## To-Do List
 
 - Touchpad support
+- Accelerometer support
 - Intercept ouput reports
 
 ## Troubleshoot
