@@ -54,9 +54,11 @@ class Program
 
 ## To-Do List
 
+- Bluetooth support
 - Touchpad support
 - Accelerometer support
 - Intercept ouput reports
+- Emulating DualShock controller
 
 ## Troubleshoot
 
