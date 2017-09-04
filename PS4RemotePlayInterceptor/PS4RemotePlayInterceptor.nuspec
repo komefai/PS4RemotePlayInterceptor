@@ -11,10 +11,11 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>$description$</description>
     <summary>Intercepting PS4 Remote Play</summary>
-    <releaseNotes>
+    <releaseNotes>PS4RemotePlayInterceptor
         - 0.1.0: First version
         - 0.2.0: Serialization support
         - 0.2.1: Fix missing Options button during conversion
+        - 0.3.0: Add watchdog to automatically inject when possible
     </releaseNotes>
     <copyright>Copyright © 2017 Komefai</copyright>
     <tags>ps4 bot remoteplay api hooking easyhook</tags>
