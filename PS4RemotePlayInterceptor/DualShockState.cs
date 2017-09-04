@@ -164,6 +164,7 @@ namespace PS4RemotePlayInterceptor
             if (L1) { data_6 += (byte)VK.L1; }
             if (R1) { data_6 += (byte)VK.R1; }
             if (Share) { data_6 += (byte)VK.Share; }
+            if (Options) { data_6 += (byte)VK.Options; }
             if (L3) { data_6 += (byte)VK.L3; }
             if (R3) { data_6 += (byte)VK.R3; }
             data[6] = data_6;
