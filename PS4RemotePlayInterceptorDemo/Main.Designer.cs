@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.injectButton = new System.Windows.Forms.Button();
+            this.pidLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // injectButton
@@ -41,21 +42,35 @@
             this.injectButton.UseVisualStyleBackColor = true;
             this.injectButton.Click += new System.EventHandler(this.injectButton_Click);
             // 
+            // pidLabel
+            // 
+            this.pidLabel.AutoSize = true;
+            this.pidLabel.Location = new System.Drawing.Point(12, 21);
+            this.pidLabel.Name = "pidLabel";
+            this.pidLabel.Size = new System.Drawing.Size(68, 13);
+            this.pidLabel.TabIndex = 1;
+            this.pidLabel.Text = "Target PID: -";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(342, 82);
+            this.Controls.Add(this.pidLabel);
             this.Controls.Add(this.injectButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "Main";
             this.Text = "PS4 Remote Play Interceptor Demo";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.Button injectButton;
+        private System.Windows.Forms.Label pidLabel;
     }
 }
 

@@ -12,7 +12,12 @@ namespace PS4RemotePlayInterceptorConsoleDemo
         {
             // Inject into PS4 Remote Play
             Interceptor.Callback = new InterceptionDelegate(OnReceiveData);
-            Interceptor.Inject();
+            // Start watchdog to automatically inject when possible
+            Interceptor.Watchdog.Start();
+
+            // Or inject manually and handle exceptions yourself
+            // Interceptor.Inject();
+            
 
             Console.WriteLine("-- Press any key to exit");
             Console.ReadKey();

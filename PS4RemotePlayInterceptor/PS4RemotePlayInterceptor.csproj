@@ -46,12 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DualShockState.cs" />
-    <Compile Include="Hooks.cs" />
-    <Compile Include="InjectionInterface.cs" />
-    <Compile Include="Interceptor.cs" />
-    <Compile Include="InterceptorException.cs" />
+    <Compile Include="Classes\DualShockState.cs" />
+    <Compile Include="Classes\Hooks.cs" />
+    <Compile Include="Classes\InjectionInterface.cs" />
+    <Compile Include="Classes\Interceptor.cs" />
+    <Compile Include="Classes\InterceptorException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Classes\Watchdog.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="EasyHook32.dll">
