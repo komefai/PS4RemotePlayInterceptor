@@ -16,6 +16,7 @@
         - 0.2.0: Serialization support
         - 0.2.1: Fix missing Options button during conversion
         - 0.3.0: Add watchdog to automatically inject when possible
+        - 0.4.0: Add support for touchpad, accelerometer, and gyro
     </releaseNotes>
     <copyright>Copyright © 2017 Komefai</copyright>
     <tags>ps4 bot remoteplay api hooking easyhook</tags>
