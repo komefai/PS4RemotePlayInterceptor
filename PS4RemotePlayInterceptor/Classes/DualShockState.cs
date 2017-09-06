@@ -53,6 +53,18 @@ namespace PS4RemotePlayInterceptor
             X = x;
             Y = y;
         }
+        public Touch(Touch touch)
+        {
+            TouchID = touch.TouchID;
+            IsTouched = touch.IsTouched;
+            X = touch.X;
+            Y = touch.Y;
+        }
+
+        public Touch Clone()
+        {
+            return new Touch(this);
+        }
     }
 
     public class DualShockState
@@ -104,6 +116,8 @@ namespace PS4RemotePlayInterceptor
         public bool R3 { get; set; }
         public bool PS { get; set; }
 
+        public Touch Touch1 { get; set; }
+        public Touch Touch2 { get; set; }
         public bool TouchButton { get; set; }
         public byte TouchPacketCounter { get; set; }
 
@@ -118,9 +132,6 @@ namespace PS4RemotePlayInterceptor
         public short GyroY { get; set; }
         public short GyroZ { get; set; }
 
-        public Touch Touch1 { get; set; }
-        public Touch Touch2 { get; set; }
-
         private static byte priorInputReport30 = 0xff;
 
         /* Constructor */
@@ -132,6 +143,89 @@ namespace PS4RemotePlayInterceptor
             RY = 0x80;
             FrameCounter = 255; // null
             TouchPacketCounter = 255; // null
+        }
+
+        public DualShockState(DualShockState state)
+        {
+            ReportTimeStamp = state.ReportTimeStamp;
+            LX = state.LX;
+            LY = state.LY;
+            RX = state.RX;
+            RY = state.RY;
+            L2 = state.L2;
+            R2 = state.R2;
+            Triangle = state.Triangle;
+            Circle = state.Circle;
+            Cross = state.Cross;
+            Square = state.Square;
+            DPad_Up = state.DPad_Up;
+            DPad_Down = state.DPad_Down;
+            DPad_Left = state.DPad_Left;
+            DPad_Right = state.DPad_Right;
+            L1 = state.L1;
+            R3 = state.R3;
+            Share = state.Share;
+            Options = state.Options;
+            R1 = state.R1;
+            L3 = state.L3;
+            PS = state.PS;
+            Touch1 = state.Touch1;
+            Touch2 = state.Touch2;
+            TouchButton = state.TouchButton;
+            TouchPacketCounter = state.TouchPacketCounter;
+            FrameCounter = state.FrameCounter;
+            Battery = state.Battery;
+            IsCharging = state.IsCharging;
+            AccelX = state.AccelX;
+            AccelY = state.AccelY;
+            AccelZ = state.AccelZ;
+            GyroX = state.GyroX;
+            GyroY = state.GyroY;
+            GyroZ = state.GyroZ;
+        }
+
+        public void CopyTo(DualShockState state)
+        {
+            state.ReportTimeStamp = ReportTimeStamp;
+            state.LX = LX;
+            state.LY = LY;
+            state.RX = RX;
+            state.RY = RY;
+            state.L2 = L2;
+            state.R2 = R2;
+            state.Triangle = Triangle;
+            state.Circle = Circle;
+            state.Cross = Cross;
+            state.Square = Square;
+            state.DPad_Up = DPad_Up;
+            state.DPad_Down = DPad_Down;
+            state.DPad_Left = DPad_Left;
+            state.DPad_Right = DPad_Right;
+            state.L1 = L1;
+            state.R3 = R3;
+            state.Share = Share;
+            state.Options = Options;
+            state.R1 = R1;
+            state.L3 = L3;
+            state.PS = PS;
+            state.Touch1 = Touch1;
+            state.Touch2 = Touch2;
+            state.TouchButton = TouchButton;
+            state.TouchPacketCounter = TouchPacketCounter;
+            state.FrameCounter = FrameCounter;
+            state.Battery = Battery;
+            state.IsCharging = IsCharging;
+            state.AccelX = AccelX;
+            state.AccelY = AccelY;
+            state.AccelZ = AccelZ;
+            state.GyroX = GyroX;
+            state.GyroY = GyroY;
+            state.GyroZ = GyroZ;
+        }
+
+        public DualShockState Clone()
+        {
+            return new DualShockState(this);
         }
 
         public static DualShockState ParseFromDualshockRaw(byte[] data)
@@ -367,6 +461,9 @@ namespace PS4RemotePlayInterceptor
             catch { }
         }
 
+        /// <summary>
+        /// Serialize a list of DualShockState to xml file
+        /// </summary>
         public static void Serialize(string path, List<DualShockState> list)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(List<DualShockState>));
@@ -376,6 +473,9 @@ namespace PS4RemotePlayInterceptor
             }
         }
 
+        /// <summary>
+        /// Deserialize a list of DualShockState from xml file
+        /// </summary>
         public static List<DualShockState> Deserialize(string path)
         {
             XmlSerializer deserializer = new XmlSerializer(typeof(List<DualShockState>));
