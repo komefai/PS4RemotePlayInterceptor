@@ -33,10 +33,32 @@ namespace PS4RemotePlayInterceptor
 {
     // References
     // https://github.com/Jays2Kings/DS4Windows/blob/jay/DS4Windows/DS4Library/DS4Device.cs
+    // https://github.com/Jays2Kings/DS4Windows/blob/jay/DS4Windows/DS4Library/DS4Sixaxis.cs
+    // https://github.com/Jays2Kings/DS4Windows/blob/jay/DS4Windows/DS4Library/DS4Touchpad.cs
     // http://www.psdevwiki.com/ps4/DS4-USB
+
+    public class Touch
+    {
+        public byte TouchID { get; set; }
+        public bool IsTouched { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        /* Constructors */
+        public Touch() { }
+        public Touch(byte touchID, bool isTouched, int x, int y)
+        {
+            TouchID = touchID;
+            IsTouched = isTouched;
+            X = x;
+            Y = y;
+        }
+    }
 
     public class DualShockState
     {
+        public const int TOUCHPAD_DATA_OFFSET = 35;
+
         private enum VK : byte
         {
             L2 = 1 << 2,
@@ -59,6 +81,7 @@ namespace PS4RemotePlayInterceptor
             TouchButton = 1 << 2 - 1
         }
 
+        public DateTime ReportTimeStamp { get; set; }
         public byte LX { get; set; }
         public byte LY { get; set; }
         public byte RX { get; set; }
@@ -80,9 +103,25 @@ namespace PS4RemotePlayInterceptor
         public bool L3 { get; set; }
         public bool R3 { get; set; }
         public bool PS { get; set; }
+
         public bool TouchButton { get; set; }
+        public byte TouchPacketCounter { get; set; }
 
         public byte FrameCounter { get; set; }
+        public byte Battery { get; set; }
+        public bool IsCharging { get; set; }
+
+        public short AccelX { get; set; }
+        public short AccelY { get; set; }
+        public short AccelZ { get; set; }
+        public short GyroX { get; set; }
+        public short GyroY { get; set; }
+        public short GyroZ { get; set; }
+
+        public Touch Touch1 { get; set; }
+        public Touch Touch2 { get; set; }
+
+        private static byte priorInputReport30 = 0xff;
 
         /* Constructor */
         public DualShockState()
@@ -91,6 +130,8 @@ namespace PS4RemotePlayInterceptor
             LY = 0x80;
             RX = 0x80;
             RY = 0x80;
+            FrameCounter = 255; // null
+            TouchPacketCounter = 255; // null
         }
 
         public static DualShockState ParseFromDualshockRaw(byte[] data)
@@ -103,6 +144,8 @@ namespace PS4RemotePlayInterceptor
 
             // Create empty state to fill in data
             var result = new DualShockState();
+
+            result.ReportTimeStamp = DateTime.UtcNow; // timestamp with UTC in case system time zone changes
 
             result.LX = data[1];
             result.LY = data[2];
@@ -154,6 +197,54 @@ namespace PS4RemotePlayInterceptor
 
             result.FrameCounter = (byte)(data[7] >> 2);
 
+            // Charging/Battery
+            try
+            {
+                result.IsCharging = (data[30] & 0x10) != 0;
+                result.Battery = (byte)((data[30] & 0x0F) * 10);
+
+                if (data[30] != priorInputReport30)
+                    priorInputReport30 = data[30];
+            }
+            catch { throw new InterceptorException("Index out of bounds: battery"); }
+
+            // Accelerometer
+            byte[] accel = new byte[6];
+            Array.Copy(data, 14, accel, 0, 6);
+            result.AccelX = (short)((ushort)(accel[2] << 8) | accel[3]);
+            result.AccelY = (short)((ushort)(accel[0] << 8) | accel[1]);
+            result.AccelZ = (short)((ushort)(accel[4] << 8) | accel[5]);
+
+            // Gyro
+            byte[] gyro = new byte[6];
+            Array.Copy(data, 20, gyro, 0, 6);
+            result.GyroX = (short)((ushort)(gyro[0] << 8) | gyro[1]);
+            result.GyroY = (short)((ushort)(gyro[2] << 8) | gyro[3]);
+            result.GyroZ = (short)((ushort)(gyro[4] << 8) | gyro[5]);
+
+            try
+            {
+                for (int touches = data[-1 + TOUCHPAD_DATA_OFFSET - 1], touchOffset = 0; touches > 0; touches--, touchOffset += 9)
+                {
+                    //bool touchLeft = (data[1 + TOUCHPAD_DATA_OFFSET + touchOffset] + ((data[2 + TOUCHPAD_DATA_OFFSET + touchOffset] & 0x0F) * 255) >= 1920 * 2 / 5) ? false : true;
+                    //bool touchRight = (data[1 + TOUCHPAD_DATA_OFFSET + touchOffset] + ((data[2 + TOUCHPAD_DATA_OFFSET + touchOffset] & 0x0F) * 255) < 1920 * 2 / 5) ? false : true;
+
+                    byte touchID1 = (byte)(data[0 + TOUCHPAD_DATA_OFFSET + touchOffset] & 0x7F);
+                    byte touchID2 = (byte)(data[4 + TOUCHPAD_DATA_OFFSET + touchOffset] & 0x7F);
+                    bool isTouch1 = (data[0 + TOUCHPAD_DATA_OFFSET + touchOffset] >> 7) != 0 ? false : true; // >= 1 touch detected
+                    bool isTouch2 = (data[4 + TOUCHPAD_DATA_OFFSET + touchOffset] >> 7) != 0 ? false : true; // 2 touches detected
+                    int currentX1 = data[1 + TOUCHPAD_DATA_OFFSET + touchOffset] + ((data[2 + TOUCHPAD_DATA_OFFSET + touchOffset] & 0x0F) * 255);
+                    int currentY1 = ((data[2 + TOUCHPAD_DATA_OFFSET + touchOffset] & 0xF0) >> 4) + (data[3 + TOUCHPAD_DATA_OFFSET + touchOffset] * 16);
+                    int currentX2 = data[5 + TOUCHPAD_DATA_OFFSET + touchOffset] + ((data[6 + TOUCHPAD_DATA_OFFSET + touchOffset] & 0x0F) * 255);
+                    int currentY2 = ((data[6 + TOUCHPAD_DATA_OFFSET + touchOffset] & 0xF0) >> 4) + (data[7 + TOUCHPAD_DATA_OFFSET + touchOffset] * 16);
+
+                    result.TouchPacketCounter = data[-1 + TOUCHPAD_DATA_OFFSET + touchOffset];
+                    result.Touch1 = new Touch(touchID1, isTouch1, currentX1, currentY1);
+                    result.Touch2 = new Touch(touchID2, isTouch2, currentX2, currentY2);
+                }
+            }
+            catch { throw new InterceptorException("Index out of bounds: touchpad"); }
+
             return result;
         }
 
@@ -199,6 +290,81 @@ namespace PS4RemotePlayInterceptor
             byte currentFrameCounter = (byte)(data[7] >> 2);
             data_7 += (byte)(currentFrameCounter << 2);
             data[7] = data_7;
+
+            // Accelerometer
+            data[14] = (byte)(AccelY >> 8);
+            data[15] = (byte)(AccelY & 0xFF);
+
+            data[16] = (byte)(AccelX >> 8);
+            data[17] = (byte)(AccelX & 0xFF);
+
+            data[18] = (byte)(AccelZ >> 8);
+            data[19] = (byte)(AccelZ & 0xFF);
+
+            // Gyro
+            data[20] = (byte)(GyroX >> 8);
+            data[21] = (byte)(GyroX & 0xFF);
+
+            data[22] = (byte)(GyroY >> 8);
+            data[23] = (byte)(GyroY & 0xFF);
+
+            data[24] = (byte)(GyroZ >> 8);
+            data[26] = (byte)(GyroZ & 0xFF);
+
+            // Charging/Battery
+            byte data_30 = 0;
+            if (IsCharging) data_30 += 0x10;
+            if (Battery > 0) data_30 += (byte)(Battery / 10);
+            data[30] = data_30;
+
+            // Touches
+            try
+            {
+                for (int touches = data[-1 + TOUCHPAD_DATA_OFFSET - 1], touchOffset = 0; touches > 0; touches--, touchOffset += 9)
+                {
+                    // Ignore
+                    // data[-1 + TOUCHPAD_DATA_OFFSET + touchOffset] = TouchPacketCounter;
+
+                    // >= 1 Finger
+                    if (Touch1 != null)
+                    {
+                        byte oldTouchID = (byte)(data[0 + TOUCHPAD_DATA_OFFSET + touchOffset] & 0x7F);
+                        if (Touch1.IsTouched)
+                            data[0 + TOUCHPAD_DATA_OFFSET + touchOffset] = oldTouchID;
+
+                        var x = Touch1.X;
+                        var xRemain = (int)(x / 255);
+                        var xLeft = x - (xRemain * 255);
+                        var y = Touch1.Y;
+                        var yRemain = (int)(y / 16);
+                        var yLeft = y - (yRemain * 16);
+
+                        data[1 + TOUCHPAD_DATA_OFFSET + touchOffset] = (byte)xLeft;
+                        data[2 + TOUCHPAD_DATA_OFFSET + touchOffset] = (byte)(xRemain + (yLeft << 4));
+                        data[3 + TOUCHPAD_DATA_OFFSET + touchOffset] = (byte)yRemain;
+                    }
+
+                    // 2 Fingers
+                    if (Touch2 != null)
+                    {
+                        byte oldTouchID = (byte)(data[4 + TOUCHPAD_DATA_OFFSET + touchOffset] & 0x7F);
+                        if (Touch2.IsTouched)
+                            data[4 + TOUCHPAD_DATA_OFFSET + touchOffset] = oldTouchID;
+
+                        var x = Touch2.X;
+                        var xRemain = (int)(x / 255);
+                        var xLeft = x - (xRemain * 255);
+                        var y = Touch2.Y;
+                        var yRemain = (int)(y / 16);
+                        var yLeft = y - (yRemain * 16);
+
+                        data[5 + TOUCHPAD_DATA_OFFSET + touchOffset] = (byte)xLeft;
+                        data[6 + TOUCHPAD_DATA_OFFSET + touchOffset] = (byte)(xRemain + (yLeft << 4));
+                        data[7 + TOUCHPAD_DATA_OFFSET + touchOffset] = (byte)yRemain;
+                    }
+                }
+            }
+            catch { }
         }
 
         public static void Serialize(string path, List<DualShockState> list)
