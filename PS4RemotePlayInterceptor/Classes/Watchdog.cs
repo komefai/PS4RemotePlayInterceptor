@@ -62,12 +62,18 @@ namespace PS4RemotePlayInterceptor
 
         public void Start(int interval = 1000)
         {
+            if (Interceptor.InjectionMode == InjectionMode.Compatibility)
+                throw new InterceptorException("Watchdog is not supported in Compatibility mode");
+
             Timer.Interval = interval;
             Timer.Enabled = true;
         }
 
         public void Stop()
         {
+            if (Interceptor.InjectionMode == InjectionMode.Compatibility)
+                throw new InterceptorException("Watchdog is not supported in Compatibility mode");
+
             Timer.Enabled = false;
         }
     }

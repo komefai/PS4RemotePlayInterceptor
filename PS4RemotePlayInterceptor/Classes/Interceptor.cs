@@ -37,6 +37,12 @@ namespace PS4RemotePlayInterceptor
 {
     public delegate void InterceptionDelegate(ref DualShockState state);
 
+    public enum InjectionMode
+    {
+        Auto,
+        Compatibility
+    }
+
     public class Interceptor
     {
         // Constants
@@ -53,6 +59,9 @@ namespace PS4RemotePlayInterceptor
         public static Watchdog Watchdog => m_Watchdog;
         public static DateTime LastPingTime { get; set; }
 
+        // Injection
+        public static InjectionMode InjectionMode = InjectionMode.Auto;
+
         // Delegate
         public static InterceptionDelegate Callback { get; set; }
 
@@ -67,13 +76,29 @@ namespace PS4RemotePlayInterceptor
 
                 try
                 {
-                    if (_ipcServer == null)
+                    bool shouldInject = false;
+
+                    if (InjectionMode == InjectionMode.Auto)
+                    {
+                        if (_ipcServer == null)
+                        {
+                            // Setup remote hooking
+                            _channelName = DateTime.Now.ToString();
+                            _ipcServer = RemoteHooking.IpcCreateServer<InjectionInterface>(ref _channelName, WellKnownObjectMode.Singleton, WellKnownSidType.WorldSid);
+                            shouldInject = true;
+                        }
+                    }
+                    else if (InjectionMode == InjectionMode.Compatibility)
                     {
                         // Setup remote hooking
-                        _channelName = DateTime.Now.ToString();
-                        _ipcServer = RemoteHooking.IpcCreateServer<InjectionInterface>(ref _channelName, WellKnownObjectMode.Singleton, WellKnownSidType.WorldSid);
+                        _channelName = null;
+                        _ipcServer = RemoteHooking.IpcCreateServer<InjectionInterface>(ref _channelName, WellKnownObjectMode.Singleton);
+                        shouldInject = true;
+                    }
 
-                        // Inject dll into the process
+                    // Inject dll into the process
+                    if (shouldInject)
+                    {
                         RemoteHooking.Inject(
                             process.Id, // ID of process to inject into
                             (_noGAC ? InjectionOptions.DoNotRequireStrongName : InjectionOptions.Default), // if not using GAC allow assembly without strong name
