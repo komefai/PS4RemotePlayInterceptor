@@ -65,13 +65,26 @@ class Program
 
 ## Troubleshoot
 
-> {"STATUS_INTERNAL_ERROR: Unknown error in injected C++ completion routine. (Code: 15)"}
+- > {"STATUS_INTERNAL_ERROR: Unknown error in injected C++ completion routine. (Code: 15)"}
 
 SOLUTION: Restart PS4 Remote Play.
 
-> DualshockState Could not be found
+- > DualshockState Could not be found
 
 SOLUTION: Rename to DualShockState for version >= 0.2.0
+
+- > Injection IPC failed (on some machines)
+
+SOLUTION: Inject with Compatibility mode instead
+
+```csharp
+// Setup callback to interceptor
+Interceptor.Callback = new InterceptionDelegate(OnReceiveData);
+
+// Inject
+Interceptor.InjectionMode = InjectionMode.Compatibility;
+Interceptor.Inject();
+```
 
 ## Credits
 
