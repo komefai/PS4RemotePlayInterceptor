@@ -1,6 +1,8 @@
 # PS4 Remote Play Interceptor
 
-![nuget](https://img.shields.io/nuget/v/PS4RemotePlayInterceptor.svg)
+[![nuget](https://img.shields.io/nuget/v/PS4RemotePlayInterceptor.svg)](https://nuget.org/packages/PS4RemotePlayInterceptor)
+[![NuGet](https://img.shields.io/nuget/dt/PS4RemotePlayInterceptor.svg)](https://nuget.org/packages/PS4RemotePlayInterceptor)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/Komefai)
 
 A small .NET library to intercept controls on PS4 Remote Play for Windows, powered by [EasyHook](https://easyhook.github.io/). The library can be used to automate any PS4 game. See the [prototype demo](https://youtu.be/QjTZsPR-BcI).
 
@@ -18,7 +20,12 @@ Add reference to PS4RemotePlayInterceptor.dll.
 
 ## Example Usage
 
+⚠️ The controller emulation feature is currently EXPERIMENTAL.
+> Known bug: Crashes everytime the injector process closed before closing PS4 Remote Play.
+
 This console application will hold the X button while moving the left analog stick upwards until interrupted by a keypress.
+
+You can set `EmulateController` to `true` to use the library without a DualShock 4 controller plugged in (require unplugging the real controller and restarting PS4 Remote Play once).
 
 ```csharp
 using PS4RemotePlayInterceptor;
@@ -29,12 +36,19 @@ class Program
     {
         // Setup callback to interceptor
         Interceptor.Callback = new InterceptionDelegate(OnReceiveData);
+        // Emulate controller (BETA)
+        Interceptor.EmulateController = false;
+
         // Start watchdog to automatically inject when possible
         Interceptor.Watchdog.Start();
+        // Notify watchdog events
+        Interceptor.Watchdog.OnInjectionSuccess = () => Console.WriteLine("Watchdog OnInjectionSuccess");
+        Interceptor.Watchdog.OnInjectionFailure = () => Console.WriteLine("Watchdog OnInjectionFailure");
 
         // Or inject manually and handle exceptions yourself
-        // Interceptor.Inject();
+        //Interceptor.Inject();
 
+        Console.WriteLine("-- Press any key to exit");
         Console.ReadKey();
     }
 
@@ -61,17 +75,12 @@ class Program
 ## To-Do List
 
 - Intercept ouput reports
-- Emulating DualShock controller
 
 ## Troubleshoot
 
 - > {"STATUS_INTERNAL_ERROR: Unknown error in injected C++ completion routine. (Code: 15)"}
 
 SOLUTION: Restart PS4 Remote Play.
-
-- > DualshockState Could not be found
-
-SOLUTION: Rename to DualShockState for version >= 0.2.0
 
 - > Injection IPC failed (on some machines)
 
