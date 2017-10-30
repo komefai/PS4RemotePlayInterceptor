@@ -45,10 +45,5 @@ namespace PS4RemotePlayInterceptorConsoleDemo
             // state.LX = 128;
             // state.LY = 128;
         }
-
-        private static void OnEmulate(ref bool value)
-        {
-            value = true;
-        }
     }
 }
