@@ -12,12 +12,17 @@ namespace PS4RemotePlayInterceptorConsoleDemo
         {
             // Setup callback to interceptor
             Interceptor.Callback = new InterceptionDelegate(OnReceiveData);
+            // Emulate controller (BETA)
+            Interceptor.EmulateController = true;
+
             // Start watchdog to automatically inject when possible
             Interceptor.Watchdog.Start();
+            // Notify watchdog events
+            Interceptor.Watchdog.OnInjectionSuccess = () => Console.WriteLine("Watchdog OnInjectionSuccess");
+            Interceptor.Watchdog.OnInjectionFailure = () => Console.WriteLine("Watchdog OnInjectionFailure");
 
             // Or inject manually and handle exceptions yourself
-            // Interceptor.Inject();
-            
+            //Interceptor.Inject();
 
             Console.WriteLine("-- Press any key to exit");
             Console.ReadKey();
@@ -39,6 +44,11 @@ namespace PS4RemotePlayInterceptorConsoleDemo
             // Force left analog to center
             // state.LX = 128;
             // state.LY = 128;
+        }
+
+        private static void OnEmulate(ref bool value)
+        {
+            value = true;
         }
     }
 }

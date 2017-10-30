@@ -30,6 +30,7 @@
         {
             this.injectButton = new System.Windows.Forms.Button();
             this.pidLabel = new System.Windows.Forms.Label();
+            this.sendStartSignalButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // injectButton
@@ -51,11 +52,22 @@
             this.pidLabel.TabIndex = 1;
             this.pidLabel.Text = "Target PID: -";
             // 
+            // sendStartSignalButton
+            // 
+            this.sendStartSignalButton.Location = new System.Drawing.Point(231, 16);
+            this.sendStartSignalButton.Name = "sendStartSignalButton";
+            this.sendStartSignalButton.Size = new System.Drawing.Size(99, 23);
+            this.sendStartSignalButton.TabIndex = 2;
+            this.sendStartSignalButton.Text = "Send Start Signal";
+            this.sendStartSignalButton.UseVisualStyleBackColor = true;
+            this.sendStartSignalButton.Click += new System.EventHandler(this.sendStartSignalButton_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(342, 82);
+            this.Controls.Add(this.sendStartSignalButton);
             this.Controls.Add(this.pidLabel);
             this.Controls.Add(this.injectButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -71,6 +83,7 @@
 
         private System.Windows.Forms.Button injectButton;
         private System.Windows.Forms.Label pidLabel;
+        private System.Windows.Forms.Button sendStartSignalButton;
     }
 }
 

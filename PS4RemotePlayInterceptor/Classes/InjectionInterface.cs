@@ -105,5 +105,13 @@ namespace PS4RemotePlayInterceptor
         {
             //Console.WriteLine("OnWriteFile {0}", filename);
         }
+
+
+        /* Config Wrappers */
+
+        public bool ShouldEmulateController()
+        {
+            return Interceptor.EmulateController;
+        }
     }
 }

@@ -30,8 +30,14 @@ using System.Timers;
 
 namespace PS4RemotePlayInterceptor
 {
+    public delegate void WatchdogEventDelegate();
+
     public class Watchdog
     {
+        // Delegates
+        public WatchdogEventDelegate OnInjectionSuccess { get; set; }
+        public WatchdogEventDelegate OnInjectionFailure { get; set; }
+
         private DateTime m_LastPingTime;
 
         private Timer m_Timer = null;
@@ -45,13 +51,7 @@ namespace PS4RemotePlayInterceptor
                     m_Timer = new Timer(1000);
                     m_Timer.Elapsed += (sender, e) =>
                     {
-                        if (m_LastPingTime == Interceptor.LastPingTime)
-                        {
-                            Interceptor.StopInjection();
-                            Interceptor.Inject();
-                        }
-
-                        m_LastPingTime = Interceptor.LastPingTime;
+                        PollInjection();
                     };
 
                 }
@@ -59,11 +59,38 @@ namespace PS4RemotePlayInterceptor
             }
         }
 
+        private void PollInjection()
+        {
+            if (m_LastPingTime == Interceptor.LastPingTime)
+            {
+                try
+                {
+                    Interceptor.StopInjection();
+                    Interceptor.Inject();
+
+                    // Invoke success callback
+                    OnInjectionSuccess?.Invoke();
+                }
+                catch
+                {
+                    // Invoke failure callback
+                    OnInjectionFailure?.Invoke();
+                }
+            }
+
+            m_LastPingTime = Interceptor.LastPingTime;
+        }
+
+        private void CheckCompatibiltyMode()
+        {
+            if (Interceptor.InjectionMode == InjectionMode.Compatibility)
+                throw new InterceptorException("Watchdog is not supported in compatibility mode");
+        }
 
         public void Start(int interval = 1000)
         {
-            if (Interceptor.InjectionMode == InjectionMode.Compatibility)
-                throw new InterceptorException("Watchdog is not supported in Compatibility mode");
+            CheckCompatibiltyMode();
+            PollInjection();
 
             Timer.Interval = interval;
             Timer.Enabled = true;
@@ -71,9 +98,7 @@ namespace PS4RemotePlayInterceptor
 
         public void Stop()
         {
-            if (Interceptor.InjectionMode == InjectionMode.Compatibility)
-                throw new InterceptorException("Watchdog is not supported in Compatibility mode");
-
+            CheckCompatibiltyMode();
             Timer.Enabled = false;
         }
     }

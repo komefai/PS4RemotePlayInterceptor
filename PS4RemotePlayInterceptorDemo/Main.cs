@@ -67,5 +67,10 @@ namespace PS4RemotePlayInterceptorDemo
 
             UpdateUI();
         }
+
+        private void sendStartSignalButton_Click(object sender, EventArgs e)
+        {
+            Interceptor.SendStartSignal();
+        }
     }
 }
