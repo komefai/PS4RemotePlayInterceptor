@@ -3,6 +3,7 @@
 [![nuget](https://img.shields.io/nuget/v/PS4RemotePlayInterceptor.svg)](https://nuget.org/packages/PS4RemotePlayInterceptor)
 [![NuGet](https://img.shields.io/nuget/dt/PS4RemotePlayInterceptor.svg)](https://nuget.org/packages/PS4RemotePlayInterceptor)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/Komefai)
+[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20Me)](https://twitter.com/itskomefai)
 
 A small .NET library to intercept controls on PS4 Remote Play for Windows, powered by [EasyHook](https://easyhook.github.io/). The library can be used to automate any PS4 game. See the [prototype demo](https://youtu.be/QjTZsPR-BcI).
 
