@@ -14,6 +14,7 @@ namespace PS4RemotePlayInterceptorDemo
             InitializeComponent();
 
             // Setup callback to interceptor
+            Interceptor.InjectionMode = InjectionMode.Compatibility;
             Interceptor.Callback = new InterceptionDelegate(OnReceiveData);
         }
 
@@ -53,7 +54,12 @@ namespace PS4RemotePlayInterceptorDemo
                 }
                 catch(InterceptorException ex)
                 {
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message + "\n\n" + ex.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    if (ex.InnerException != null)
+                    {
+                        MessageBox.Show(ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             else

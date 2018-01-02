@@ -39,7 +39,11 @@ namespace PS4RemotePlayInterceptor
         /// </summary>
         public void OnInjectionSuccess(int clientPID)
         {
-            Console.WriteLine("OnInjectionSuccess {0}", clientPID);
+            try
+            {
+                Console.WriteLine("OnInjectionSuccess {0}", clientPID);
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -47,10 +51,14 @@ namespace PS4RemotePlayInterceptor
         /// </summary>
         public void Ping()
         {
-            //Console.WriteLine("Ping");
+            try
+            {
+                //Console.WriteLine("Ping");
 
-            // Store timestamp
-            Interceptor.LastPingTime = DateTime.Now;
+                // Store timestamp
+                Interceptor.LastPingTime = DateTime.Now;
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -59,7 +67,11 @@ namespace PS4RemotePlayInterceptor
         /// <param name="message"></param>
         public void ReportLog(string message)
         {
-            Console.WriteLine("ReportLog {0}", message);
+            try
+            {
+                Console.WriteLine("ReportLog {0}", message);
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -68,7 +80,11 @@ namespace PS4RemotePlayInterceptor
         /// <param name="e"></param>
         public void ReportException(Exception e)
         {
-            Console.WriteLine("ReportException {0}", e.Message);
+            try
+            {
+                Console.WriteLine("ReportException {0}", e.Message);
+            }
+            catch (Exception) { }
         }
 
 
@@ -81,29 +97,37 @@ namespace PS4RemotePlayInterceptor
 
         public void OnReadFile(string filename, ref byte[] inputReport)
         {
-            //Console.WriteLine("OnReadFile {0}", filename);
-
-            // Expect inputReport to be modified
-            if (Interceptor.Callback != null)
+            try
             {
-                // Parse the state
-                var state = DualShockState.ParseFromDualshockRaw(inputReport);
+                //Console.WriteLine("OnReadFile {0}", filename);
 
-                // Skip if state is invalid
-                if (state == null)
-                    return;
+                // Expect inputReport to be modified
+                if (Interceptor.Callback != null)
+                {
+                    // Parse the state
+                    var state = DualShockState.ParseFromDualshockRaw(inputReport);
 
-                // Expect it to be modified
-                Interceptor.Callback(ref state);
+                    // Skip if state is invalid
+                    if (state == null)
+                        return;
 
-                // Convert it back
-                state.ConvertToDualshockRaw(ref inputReport);
+                    // Expect it to be modified
+                    Interceptor.Callback(ref state);
+
+                    // Convert it back
+                    state.ConvertToDualshockRaw(ref inputReport);
+                }
             }
+            catch (Exception) { }
         }
 
         public void OnWriteFile(string filename, ref byte[] outputReport)
         {
-            //Console.WriteLine("OnWriteFile {0}", filename);
+            try
+            {
+                //Console.WriteLine("OnWriteFile {0}", filename);
+            }
+            catch (Exception) { }
         }
 
 
@@ -111,7 +135,12 @@ namespace PS4RemotePlayInterceptor
 
         public bool ShouldEmulateController()
         {
-            return Interceptor.EmulateController;
+            try
+            {
+                return Interceptor.EmulateController;
+            }
+            catch (Exception) { return false; }
+            
         }
     }
 }
