@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Komefai")]
 [assembly: AssemblyProduct("PS4RemotePlayInterceptor")]
-[assembly: AssemblyCopyright("Copyright ©  2017 Komefai")]
+[assembly: AssemblyCopyright("Copyright ©  2018 Komefai")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
