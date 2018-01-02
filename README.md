@@ -21,12 +21,9 @@ Add reference to PS4RemotePlayInterceptor.dll.
 
 ## Example Usage
 
-⚠️ The controller emulation feature is currently EXPERIMENTAL.
-> Known bug: Crashes everytime the injector process closed before closing PS4 Remote Play.
-
 This console application will hold the X button while moving the left analog stick upwards until interrupted by a keypress.
 
-You can set `EmulateController` to `true` to use the library without a DualShock 4 controller plugged in (require unplugging the real controller and restarting PS4 Remote Play once).
+You can set `EmulateController` to `true` to use the library without a DualShock 4 controller plugged in (the real controller must be unplugged).
 
 ```csharp
 using PS4RemotePlayInterceptor;
