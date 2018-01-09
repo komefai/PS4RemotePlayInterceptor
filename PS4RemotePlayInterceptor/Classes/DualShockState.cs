@@ -174,8 +174,8 @@ namespace PS4RemotePlayInterceptor
             R1 = state.R1;
             L3 = state.L3;
             PS = state.PS;
-            Touch1 = state.Touch1.Clone();
-            Touch2 = state.Touch2.Clone();
+            Touch1 = state.Touch1 == null ? null : state.Touch1.Clone();
+            Touch2 = state.Touch2 == null ? null : state.Touch2.Clone();
             TouchButton = state.TouchButton;
             TouchPacketCounter = state.TouchPacketCounter;
             FrameCounter = state.FrameCounter;
@@ -213,8 +213,8 @@ namespace PS4RemotePlayInterceptor
             state.R1 = R1;
             state.L3 = L3;
             state.PS = PS;
-            state.Touch1 = Touch1.Clone();
-            state.Touch2 = Touch2.Clone();
+            state.Touch1 = Touch1 == null ? null : Touch1.Clone();
+            state.Touch2 = Touch2 == null ? null : Touch2.Clone();
             state.TouchButton = TouchButton;
             state.TouchPacketCounter = TouchPacketCounter;
             state.FrameCounter = FrameCounter;
