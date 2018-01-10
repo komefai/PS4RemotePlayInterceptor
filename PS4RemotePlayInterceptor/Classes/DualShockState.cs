@@ -564,7 +564,7 @@ namespace PS4RemotePlayInterceptor
 
                     if (changedValue == null) continue;
 
-                    XmlElement elem = doc.CreateElement(info.Name);
+                    XmlElement propertyElem = doc.CreateElement(info.Name);
 
                     // Touch
                     if (changedValue is Touch)
@@ -580,8 +580,11 @@ namespace PS4RemotePlayInterceptor
 
                                 XmlElement t_elem = doc.CreateElement(t_info.Name);
                                 t_elem.InnerText = t_value.ToString().ToLowerInvariant();
-                                elem.AppendChild(t_elem);
+                                propertyElem.AppendChild(t_elem);
                             }
+
+                            // Append property node
+                            typeNode.AppendChild(propertyElem);
                         }
                     }
                     // Other properties
@@ -592,20 +595,21 @@ namespace PS4RemotePlayInterceptor
                         // Bool
                         if (changedValue is bool)
                         {
-                            elem.InnerText = changedValue.ToString().ToLowerInvariant();
+                            propertyElem.InnerText = changedValue.ToString().ToLowerInvariant();
                         }
                         // DateTime
                         else if (changedValue is DateTime)
                         {
-                            elem.InnerText = ((DateTime)changedValue).ToString("o");
+                            propertyElem.InnerText = ((DateTime)changedValue).ToString("o");
                         }
                         // Object
                         else
                         {
-                            elem.InnerText = changedValue.ToString();
+                            propertyElem.InnerText = changedValue.ToString();
                         }
 
-                        typeNode.AppendChild(elem);
+                        // Append property node
+                        typeNode.AppendChild(propertyElem);
                     }
                 }
 
