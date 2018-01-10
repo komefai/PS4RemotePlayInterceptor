@@ -26,7 +26,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace PS4RemotePlayInterceptor
@@ -45,7 +47,13 @@ namespace PS4RemotePlayInterceptor
         public int Y { get; set; }
 
         /* Constructors */
-        public Touch() { }
+        public Touch()
+        {
+            TouchID = 0;
+            IsTouched = false;
+            X = 0;
+            Y = 0;
+        }
         public Touch(byte touchID, bool isTouched, int x, int y)
         {
             TouchID = touchID;
@@ -259,7 +267,9 @@ namespace PS4RemotePlayInterceptor
                     state.Options == _defaultState.Options &&
                     state.L3 == _defaultState.L3 &&
                     state.R3 == _defaultState.R3 &&
-                    state.PS == _defaultState.PS;
+                    state.PS == _defaultState.PS &&
+                    (state.Touch1 != null && state.Touch1.IsTouched) &&
+                    (state.Touch2 != null && state.Touch2.IsTouched);
         }
 
         public static DualShockState ParseFromDualshockRaw(byte[] data)
@@ -519,6 +529,98 @@ namespace PS4RemotePlayInterceptor
                 List<DualShockState> list = obj as List<DualShockState>;
                 return list;
             }
+        }
+
+        /// <summary>
+        /// Serialize a list of DualShockState to xml file and remove unchanged properties for smaller file size
+        /// </summary>
+        public static void SerializeCompressed(string path, List<DualShockState> list, List<string> excludeProperties = null)
+        {
+            string containerTypeName = "ArrayOfDualShockState";
+            Type type = typeof(DualShockState);
+
+            StringBuilder sb = new StringBuilder();
+
+            // Header
+            sb.Append($"<?xml version=\"1.0\" encoding=\"utf-8\"?><{containerTypeName}>");
+
+            // Contents
+            foreach (var s in list)
+            {
+                if (excludeProperties == null) excludeProperties = new List<string>();
+
+                XmlDocument doc = new XmlDocument();
+                XmlNode typeNode = doc.CreateNode(XmlNodeType.Element, type.Name, string.Empty);
+                doc.AppendChild(typeNode);
+
+                // Go through properties
+                foreach (PropertyInfo info in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    if (!info.CanRead || !info.CanWrite) continue;
+                    if (excludeProperties.Contains(info.Name)) continue;
+
+                    object templateValue = info.GetValue(_defaultState, null);
+                    object changedValue = info.GetValue(s, null);
+
+                    if (changedValue == null) continue;
+
+                    XmlElement elem = doc.CreateElement(info.Name);
+
+                    // Touch
+                    if (changedValue is Touch)
+                    {
+                        Touch t = changedValue as Touch;
+                        if (t.IsTouched)
+                        {
+                            foreach (PropertyInfo t_info in typeof(Touch).GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                            {
+                                if (!t_info.CanRead || !t_info.CanWrite) continue;
+
+                                object t_value = t_info.GetValue(t, null);
+
+                                XmlElement t_elem = doc.CreateElement(t_info.Name);
+                                t_elem.InnerText = t_value.ToString().ToLowerInvariant();
+                                elem.AppendChild(t_elem);
+                            }
+                        }
+                    }
+                    // Other properties
+                    else
+                    {
+                        if (templateValue == null || templateValue.Equals(changedValue)) continue;
+
+                        // Bool
+                        if (changedValue is bool)
+                        {
+                            elem.InnerText = changedValue.ToString().ToLowerInvariant();
+                        }
+                        // DateTime
+                        else if (changedValue is DateTime)
+                        {
+                            elem.InnerText = ((DateTime)changedValue).ToString("o");
+                        }
+                        // Object
+                        else
+                        {
+                            elem.InnerText = changedValue.ToString();
+                        }
+
+                        typeNode.AppendChild(elem);
+                    }
+                }
+
+                using (StringWriter sw = new StringWriter())
+                {
+                    doc.WriteContentTo(new XmlTextWriter(sw));
+                    sb.Append(sw.ToString());
+                }
+            }
+
+            // Footer
+            sb.Append($"</{containerTypeName}>");
+
+            // Write to file
+            File.WriteAllText(path, sb.ToString());
         }
     }
 }
