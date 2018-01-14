@@ -48,7 +48,7 @@ namespace PS4RemotePlayInterceptor
     {
         #region Win32 API
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr PostMessage(IntPtr hWnd, uint msg, uint wParam, uint lParam);
+        private static extern IntPtr PostMessage(IntPtr hWnd, uint msg, uint wParam, uint lParam);
         #endregion
 
         // Constants
