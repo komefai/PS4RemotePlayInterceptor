@@ -20,6 +20,7 @@
         - 0.4.1: Fix object cloning on DualShockState and add support for original injection method
         - 0.5.0: Add emulator for DualShock 4 controllers and add delegates for watchdog
         - 0.5.1: Fix crashes when closing host before RemotePlay
+        - 0.5.2: Add compressed serialization and allow null values when cloning DualShockState
     </releaseNotes>
     <copyright>Copyright © 2018 Komefai</copyright>
     <tags>ps4 bot remoteplay api hooking easyhook dualshock emulator</tags>
